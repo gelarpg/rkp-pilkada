@@ -1,12 +1,13 @@
 "use client"
-
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import Link from 'next/link'
 import { HiMiniBars3, HiXMark } from 'react-icons/hi2'
 
 
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
+  { name: 'Dashboard', href: '/dashboard', },
+  { name: 'Data TPS', href: '/tps', },
+  { name: 'Team', href: '/members',},
 ]
 
 
@@ -38,7 +39,6 @@ const Navbar = () => {
                   <a
                     key={item.name}
                     href={item.href}
-                    aria-current={item.current ? 'page' : undefined}
                     className= 'bg-gray-900  text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'
                   >
                     {item.name}
@@ -75,11 +75,6 @@ const Navbar = () => {
               >
                 <MenuItem>
                   <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
-                    Your Profile
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
                     Settings
                   </a>
                 </MenuItem>
@@ -97,15 +92,13 @@ const Navbar = () => {
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pb-3 pt-2">
           {navigation.map((item) => (
-            <DisclosureButton
+            <Link
               key={item.name}
-              as="a"
               href={item.href}
-              aria-current={item.current ? 'page' : undefined}
               className='bg-gray-900 text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium'
             >
               {item.name}
-            </DisclosureButton>
+            </Link>
           ))}
         </div>
       </DisclosurePanel>
