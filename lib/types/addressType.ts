@@ -28,3 +28,12 @@ export type Village ={
     province:Province
 }
 
+export type RW ={
+    id:number
+    name:string
+}
+export type RT ={
+    id:number
+    name:string
+}
+

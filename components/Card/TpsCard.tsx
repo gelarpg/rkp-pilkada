@@ -29,6 +29,13 @@ const dataTps = [
     address: "Kabupaten Muara Enim, Kecamatan Lembak, Desa Tapus",
     voter_total: 134,
   },
+  {
+    id: 5,
+    name: "TPS 5",
+    href: "#",
+    address: "Kabupaten Muara Enim, Kecamatan Lembak, Desa Tapus",
+    voter_total: 0,
+  },
 ];
 const TpsCard = () => {
   return (

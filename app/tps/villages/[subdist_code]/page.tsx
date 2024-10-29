@@ -18,7 +18,6 @@ interface Props {
   params: Promise<{
     subdist_code: number;
   }>;
-  
 }
 
 const Page = ({ params }: Props) => {

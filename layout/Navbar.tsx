@@ -7,7 +7,7 @@ import { HiMiniBars3, HiXMark } from 'react-icons/hi2'
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', },
   { name: 'Data TPS', href: '/tps', },
-  { name: 'Team', href: '/members',},
+  { name: 'Anggota', href: '/members',},
 ]
 
 

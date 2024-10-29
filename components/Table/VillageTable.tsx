@@ -30,7 +30,7 @@ const VillageTable = ({ villages, villageSearch }: Props) => {
             scope="col"
             className="px-6 py-3 text-start text-sm font-medium text-gray-500 uppercase"
           >
-            profil
+            Data TPS
           </th>
         </tr>
       </thead>
@@ -47,7 +47,7 @@ const VillageTable = ({ villages, villageSearch }: Props) => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   <Link
-                    href={`/tps/villages/profile/${village.code}`}
+                    href={`/tps/villages/residents/${village.code}`}
                     className="text-indigo-600 hover:underline"
                   >
                     Lihat Data TPS
@@ -69,7 +69,7 @@ const VillageTable = ({ villages, villageSearch }: Props) => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   <Link
-                    href={`/tps/villages/profile/${village.code}`}
+                    href={`/tps/villages/residents/${village.code}`}
                     className="text-indigo-600 hover:underline"
                   >
                     Lihat Data TPS
