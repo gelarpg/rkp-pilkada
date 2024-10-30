@@ -50,7 +50,7 @@ const MemberUpdateModal = ({ memberData, onClose }: Props) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-gray-900 bg-opacity-80 overflow-x-auto overflow-y-auto">
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-gray-900 bg-opacity-80 overflow-x-auto overflow-y-auto p-3">
       <div className="bg-white rounded-lg shadow-lg w-full sm:max-w-lg">
         <form onSubmit={handleUpdate}>
           <div className="flex justify-between items-center py-3 px-4 border-b">

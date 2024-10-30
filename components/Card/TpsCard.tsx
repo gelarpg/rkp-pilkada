@@ -1,4 +1,6 @@
 import React from "react";
+import TpsDropdown from "../Dropdown/TpsDropdown";
+import Link from "next/link";
 
 const dataTps = [
   {
@@ -12,7 +14,8 @@ const dataTps = [
     id: 2,
     name: "TPS 2",
     href: "#",
-    address: "Kabupaten Muara Enim, Kecamatan Gunung Megang, Desa Gunung Megang Dalam",
+    address:
+      "Kabupaten Muara Enim, Kecamatan Gunung Megang, Desa Gunung Megang Dalam",
     voter_total: 60,
   },
   {
@@ -45,9 +48,17 @@ const TpsCard = () => {
           key={data.id}
           className="w-full rounded-xl border-[1.5px] border-stroke bg-white p-4"
         >
-          <h3 className="text-xl font-bold text-gray-900">{data.name}</h3>
+          <div className="flex justify-between items-center">
+            <Link href={`/tps/${data.id}`}>
+              <h3 className="text-xl font-bold text-gray-900 hover:text-indigo-500">{data.name}</h3>
+            </Link>
+            <TpsDropdown tpsData={data} />
+          </div>
           <p className="text-gray-500 my-3">{data.address}</p>
-          <p className="text-gray-500"><span className="font-semibold">Pemilih :</span> {data.voter_total} Orang</p>
+          <p className="text-gray-500">
+            <span className="font-semibold">Pemilih :</span> {data.voter_total}{" "}
+            Orang
+          </p>
         </div>
       ))}
     </>

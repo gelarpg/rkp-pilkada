@@ -1,23 +1,19 @@
 "use client";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
+import Link from "next/link";
 import React, { useState } from "react";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import { HiDotsVertical } from "react-icons/hi";
-import TpsUpdateModal from "../Modal/Tps/TpsUpdateModal";
-import TpsDeleteModal from "../Modal/Tps/TpsDeleteModal";
+import ResidentDeleteModal from "../Modal/Resident/ResidentDeleteModal";
 
 interface Props {
-  tpsData?: any;
+  resident: any;
 }
-const TpsDropdown = ({ tpsData }: Props) => {
+const ResidentDropdown = ({ resident }: Props) => {
   const [openDelete, setOpenDelete] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false);
 
   const toggleModalDelete = () => {
     setOpenDelete(!openDelete);
-  };
-  const toggleModalUpdate = () => {
-    setOpenUpdate(!openUpdate);
   };
 
   return (
@@ -37,13 +33,13 @@ const TpsDropdown = ({ tpsData }: Props) => {
       >
         <div className="py-1">
           <MenuItem>
-            <button
+            <Link
+              href={`/tps/villages/residents/${resident.village_code}/edit/${resident.id}`}
               className=" px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 flex justify-start items-center gap-2 w-full"
-              onClick={toggleModalUpdate}
             >
               <BiEdit size={20} />
               Edit
-            </button>
+            </Link>
           </MenuItem>
           <MenuItem>
             <button
@@ -56,14 +52,14 @@ const TpsDropdown = ({ tpsData }: Props) => {
           </MenuItem>
         </div>
       </MenuItems>
-      {openUpdate && (
-        <TpsUpdateModal tpsData={tpsData} onClose={toggleModalUpdate} />
-      )}
       {openDelete && (
-        <TpsDeleteModal tpsData={tpsData} onClose={toggleModalDelete} />
-      )}
+      <ResidentDeleteModal
+        resident={resident}
+        onClose={toggleModalDelete}
+      />
+    )}
     </Menu>
   );
 };
 
-export default TpsDropdown;
+export default ResidentDropdown;

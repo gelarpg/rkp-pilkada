@@ -4,9 +4,10 @@ import { loginAuth } from "@/redux/features/auth/authSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import router from "next/router";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
+const currentYear = new Date().getFullYear();
 
 const SignForm = () => {
   const [username, setUsername] = useState("");
@@ -140,11 +141,8 @@ const SignForm = () => {
           </div>
         </form>
 
-        <p className="mt-10 text-center text-sm text-gray-500">
-          Dibuat untuk{" "}
-          <span className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-            Ibu Kiki Marlyn :)
-          </span>
+        <p className="mt-10 text-sm text-gray-500 flex justify-center items-center gap-1">
+          Copyright &copy; {currentYear}
         </p>
       </div>
     </div>

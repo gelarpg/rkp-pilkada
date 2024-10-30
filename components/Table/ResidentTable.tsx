@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { ListPulseLoader } from "../Loader/MainLoader";
-import MemberDropdown from "../Dropdown/MemberDropdown";
 import { Resident } from "@/lib/types/residentType";
+import ResidentDropdown from "../Dropdown/ResidentDropdown";
 
 interface Props {
   residents?: any[];
@@ -11,6 +11,7 @@ interface Props {
 const ResidentTable = ({ residents, residentSearch }: Props) => {
   const [loading, setLoading] = useState(false);
   return (
+    <div className="overflow-scroll">
     <table className="min-w-full divide-y divide-gray-200">
       <thead>
         <tr>
@@ -42,6 +43,12 @@ const ResidentTable = ({ residents, residentSearch }: Props) => {
             scope="col"
             className="px-6 py-3 text-start text-sm font-medium text-gray-500 uppercase"
           >
+            TPS
+          </th>
+          <th
+            scope="col"
+            className="px-6 py-3 text-start text-sm font-medium text-gray-500 uppercase"
+          >
             Aksi
           </th>
         </tr>
@@ -64,7 +71,10 @@ const ResidentTable = ({ residents, residentSearch }: Props) => {
                   {data.gender}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 capitalize">
-                  <MemberDropdown memberData={data}/>
+                  {data.tps_id}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  <ResidentDropdown resident={data} />
                 </td>
               </tr>
             ))}
@@ -87,7 +97,10 @@ const ResidentTable = ({ residents, residentSearch }: Props) => {
                   {data.gender}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 capitalize">
-                  <MemberDropdown memberData={data}/>
+                  {data.tps_id}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
+                  <ResidentDropdown resident={data} />
                 </td>
               </tr>
             ))}
@@ -95,6 +108,7 @@ const ResidentTable = ({ residents, residentSearch }: Props) => {
         )}
       </tbody>
     </table>
+    </div>
   );
 };
 

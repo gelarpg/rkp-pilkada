@@ -13,6 +13,7 @@ export type Resident={
     village_code:Village
     rukun_warga_id:RW
     rukun_tetangga_id:RT
+    tps_id:number
 }
 
 export type Work={

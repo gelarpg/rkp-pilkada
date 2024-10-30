@@ -6,9 +6,9 @@ interface Props{
 }
 const MainLayout:React.FC<Props> = ({children}) => {
   return (
-    <div className='mx-2 lg:mx-0'>
+    <div className=' lg:mx-0'>
     <Navbar/>
-        <div className="mt-10 lg:mx-28 ">
+        <div className="mt-10 mx-2 lg:mx-28">
             {children}
         </div>
     </div>

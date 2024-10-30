@@ -72,7 +72,7 @@ const MemberTable = ({ users, userSearch }: Props) => {
                     </span>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 capitalize">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   <MemberDropdown memberData={data}/>
                 </td>
               </tr>
@@ -104,7 +104,7 @@ const MemberTable = ({ users, userSearch }: Props) => {
                     </span>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 capitalize">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   <MemberDropdown memberData={data}/>
                 </td>
               </tr>

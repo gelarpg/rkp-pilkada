@@ -1,14 +1,17 @@
 "use client";
+
 import { AppDispatch, RootState } from "@/redux/store";
+
+import Image from "next/image";
 import React, { SyntheticEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
-  memberData?: any;
+  tpsData?: any;
   onClose: () => void;
 }
 
-const MemberDeleteModal = ({ memberData, onClose }: Props) => {
+const TpsDeleteModal = ({ tpsData, onClose }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -17,8 +20,8 @@ const MemberDeleteModal = ({ memberData, onClose }: Props) => {
   const handleDelete = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
-      if (memberData) {
-        // dispatch(updateCategory({ id: memberData.id, formData: formData }));
+      if (tpsData) {
+        // dispatch(updateCategory({ id: tpsData.id, formData: formData }));
         onClose();
       }
     } catch (error) {
@@ -31,8 +34,8 @@ const MemberDeleteModal = ({ memberData, onClose }: Props) => {
       <div className="bg-white rounded-lg shadow-lg w-full sm:max-w-md">
         <form onSubmit={handleDelete}>
           <div className="p-3">
-            <h1 className="font-semibold text-xl">Hapus anggota ?</h1>
-            <p className="text-base">Anda akan menghapus anggota secara permanen</p>
+            <h1 className="font-semibold text-xl">Hapus TPS ?</h1>
+            <p className=" text-base">Anda akan menghapus TPS secara permanen</p>
           </div>
           <div className="flex justify-end items-center gap-3 py-3 px-4 ">
             <button
@@ -56,4 +59,4 @@ const MemberDeleteModal = ({ memberData, onClose }: Props) => {
   );
 };
 
-export default MemberDeleteModal;
+export default TpsDeleteModal;

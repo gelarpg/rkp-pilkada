@@ -1,6 +1,11 @@
+"use client"
 import React from "react";
 
-const ResidentForm = () => {
+
+interface Props{
+    resident:any
+}
+const ResidentUpdateForm = ({resident}:Props) => {
   return (
     <form>
       <div className="space-y-12">
@@ -12,6 +17,26 @@ const ResidentForm = () => {
             Harap masukan data dengan teliti dan benar
           </p>
 
+          <div className="sm:w-fit">
+                <label
+                  htmlFor="tps_id"
+                  className="block text-sm/6 font-medium text-gray-900"
+                >
+                  Pilih TPS
+                </label>
+                <div className="mt-2">
+                  <select
+                    id="tps_id"
+                    name="tps_id"
+                    className="block w-full rounded-md border py-1.5 text-gray-900 shadow-sm sm:max-w-xs sm:text-sm/6"
+                  >
+                    <option>TPS 1</option>
+                    <option>TPS 2</option>
+                    <option>TPS 3</option>
+                    <option>TPS 4</option>
+                  </select>
+                </div>
+              </div>
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-1">
               <label
@@ -307,11 +332,11 @@ const ResidentForm = () => {
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Simpan
+          Perbarui
         </button>
       </div>
     </form>
   );
 };
 
-export default ResidentForm;
+export default ResidentUpdateForm;

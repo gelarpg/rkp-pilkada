@@ -20,8 +20,13 @@ const users = [
 const Page = () => {
   return (
     <MainLayout>
-      <MemberCreateModal />
-      <MemberTable users={users} userSearch={[]} />
+      <div className="flex justify-between items-center gap-2 mb-3">
+        <h1 className="text-xl font-semibold">Daftar Anggota</h1>
+        <MemberCreateModal />
+      </div>
+      <div className="overflow-scroll">
+        <MemberTable users={users} userSearch={[]} />
+      </div>
     </MainLayout>
   );
 };
