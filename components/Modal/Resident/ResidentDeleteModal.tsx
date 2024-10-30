@@ -38,14 +38,14 @@ const ResidentDeleteModal = ({ resident, onClose }: Props) => {
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex flex-shrink-0 justify-center items-center p-2 rounded-lg bg-gray-400 w-fit text-gray-800 text-sm"
+              className="inline-flex flex-shrink-0 justify-center items-center p-2 rounded-lg bg-gray-200 w-fit text-gray-800 text-sm"
             >
               Batal
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex flex-shrink-0 justify-center items-center p-2 rounded-lg bg-gray-400 w-fit text-gray-800 text-sm"
+              className="inline-flex flex-shrink-0 justify-center items-center p-2 rounded-lg bg-gray-200 w-fit text-gray-800 text-sm"
             >
               Hapus
             </button>
