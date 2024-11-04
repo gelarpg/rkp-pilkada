@@ -113,9 +113,9 @@ export const updateEmailApi = async (formData:FormData) =>{
     }
 }
 
-export const changePasswordApi = async (formData:FormData) =>{
+export const updatePasswordApi = async (formData:FormData) =>{
     try{
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/user/change`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/user/update-password`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

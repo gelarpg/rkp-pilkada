@@ -2,7 +2,7 @@
 import MainInput from "@/components/Input/MainInput";
 import { loginAuth } from "@/redux/features/auth/authSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +21,7 @@ const SignForm = () => {
     (state: RootState) => state.auth
   );
 
-  const handlerLogin = async (e: any) => {
+  const handleSignin = async (e: any) => {
     e.preventDefault();
     setLoading(false);
     try {
@@ -36,24 +36,29 @@ const SignForm = () => {
     }
   };
   useEffect(() => {
-    if (code === 200 && user?.level !== 5) {
+    if (code === 200) {
       localStorage.setItem("access_token", access_token);
-      router.push("/home");
+      router.push("/dashboard");
       setValidation(message);
       setLoading(true);
-    } else if (code === 400) {
+    }
+    if (code === 400) {
       setValidation(message);
-      setLoading(false);
-    } else if (code === 200 && user?.level === 5) {
-      const error = "Anda gagal masuk";
-      setValidation(error);
       setLoading(false);
     }
   }, [user, code, access_token, router, message]);
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h1 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col items-center justify-center">
+        <Image
+          alt="Your Company"
+          src={"/images/sirada_logo.png"}
+          width={20}
+          height={20}
+          className="h-28 w-28"
+          unoptimized={true}
+        />
+        <h1 className=" text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Sistem Rekap Data Pilkada
         </h1>
         <h2 className="mt-1 text-center text-xl leading-9 tracking-tight text-gray-900">
@@ -61,8 +66,8 @@ const SignForm = () => {
         </h2>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form action="#" method="POST" className="space-y-6">
+      <div className="mt-3 sm:mx-auto sm:w-full sm:max-w-sm">
+        <form onSubmit={handleSignin} className="space-y-6">
           <div>
             <label
               htmlFor="username"
@@ -107,41 +112,32 @@ const SignForm = () => {
               {validation}
             </p>
           )}
-          {/* {!loading ? (
-              <>
-                <button
-                  type="submit"
-                  className={`py-3 px-4 w-full text-center gap-x-2 text-sm font-semibold rounded-xl text-white ${
-                    username && password
-                      ? "bg-indigo-500 hover:bg-indigo-600"
-                      : "bg-slate-400 cursor-not-allowed"
-                  }`}
-                  // disabled={!username && !password}
-                >
-                  Masuk
-                </button>
-             
-              </>
-            ) : (
+          {!loading ? (
+            <>
               <button
-                className="py-3 px-4 w-full text-center flex justify-center disabled:bg-slate-400  gap-x-2 text-sm font-semibold rounded-xl  bg-indigo-500/20 hover:bg-indigo-500/20 text-white hover:bg-indigo-600"
-                disabled={true}
+                type="submit"
+                className={`py-3 px-4 w-full text-center gap-x-2 text-sm font-semibold rounded-xl text-white ${
+                  username && password
+                    ? "bg-indigo-500 hover:bg-indigo-600"
+                    : "bg-slate-400 cursor-not-allowed"
+                }`}
+                // disabled={!username && !password}
               >
-                Harap tunggu
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-solid border-slate-500 border-t-transparent"></div>
+                Masuk
               </button>
-            )} */}
-          <div className="mt-10 ">
-            <Link
-              href="/dashboard"
-              className="bg-indigo-500 text-white px-3 py-2 rounded-lg w-full justify-center flex"
+            </>
+          ) : (
+            <button
+              className="py-3 px-4 w-full text-center flex justify-center disabled:bg-slate-400  gap-x-2 text-sm font-semibold rounded-xl  bg-indigo-500/20 hover:bg-indigo-500/20 text-white hover:bg-indigo-600"
+              disabled={true}
             >
-              Masuk
-            </Link>
-          </div>
+              Harap tunggu
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-solid border-slate-500 border-t-transparent"></div>
+            </button>
+          )}
         </form>
 
-        <p className="mt-10 text-sm text-gray-500 flex justify-center items-center gap-1">
+        <p className="mt-3 text-sm text-gray-500 flex justify-center items-center gap-1">
           Copyright &copy; {currentYear}
         </p>
       </div>

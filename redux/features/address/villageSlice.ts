@@ -1,5 +1,5 @@
 
-import { createVillageApi, deletePremiumVillageApi, deleteVillageApi, getPremiumVillagesApi, searchPremiumVillageApi, updatePremiumVillageApi, updateVillageApi, getSearchVillagesApi, getVillagesApi } from "@/lib/api/villageApi";
+import { createVillageApi, deleteVillageApi,updateVillageApi, getSearchVillagesApi, getVillagesApi } from "@/lib/api/villageApi";
 import { Village } from "@/lib/types/addressType";
 import { RootState } from "@/redux/store";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";

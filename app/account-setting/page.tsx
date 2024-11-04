@@ -1,7 +1,7 @@
 "use client";
 import ChangePassModal from "@/components/Modal/Auth/ChangePassModal";
 import EmailEditModal from "@/components/Modal/Auth/EmailEditModal";
-import UsernameEditModal from "@/components/Modal/Auth/UsernameEditModal";
+import UsernameEditModal from "@/components/Modal/Auth/ChangeUsernameModal";
 import MainLayout from "@/layout/MainLayout";
 import { getUser, resetUser } from "@/redux/features/user/userSlice";
 import { AppDispatch, RootState } from "@/redux/store";

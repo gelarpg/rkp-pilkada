@@ -1,27 +1,24 @@
 "use client";
 
+import { deleteTps } from "@/redux/features/tps/tpsSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-
-import Image from "next/image";
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
-  tpsData?: any;
+  tps?: any;
   onClose: () => void;
 }
 
-const TpsDeleteModal = ({ tpsData, onClose }: Props) => {
-  const [loading, setLoading] = useState(false);
-
+const TpsDeleteModal = ({ tps, onClose }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
-  // const { loading } = useSelector((state: RootState) => state.category);
+  const { loading } = useSelector((state: RootState) => state.tps);
 
   const handleDelete = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
-      if (tpsData) {
-        // dispatch(updateCategory({ id: tpsData.id, formData: formData }));
+      if (tps) {
+        dispatch(deleteTps({ id: tps.id as number }));
         onClose();
       }
     } catch (error) {
@@ -35,7 +32,9 @@ const TpsDeleteModal = ({ tpsData, onClose }: Props) => {
         <form onSubmit={handleDelete}>
           <div className="p-3">
             <h1 className="font-semibold text-xl">Hapus TPS ?</h1>
-            <p className=" text-base">Anda akan menghapus TPS secara permanen</p>
+            <p className=" text-base">
+              Anda akan menghapus TPS secara permanen
+            </p>
           </div>
           <div className="flex justify-end items-center gap-3 py-3 px-4 ">
             <button
@@ -45,13 +44,22 @@ const TpsDeleteModal = ({ tpsData, onClose }: Props) => {
             >
               Batal
             </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex flex-shrink-0 justify-center items-center p-2 rounded-lg bg-gray-200 w-fit text-gray-800 text-sm"
-            >
-              Hapus
-            </button>
+            {loading ? (
+              <button
+                type="button"
+                className="inline-flex flex-shrink-0 justify-center items-center p-2 rounded-lg bg-gray-500 w-fit text-gray-800 text-sm"
+                disabled={true}
+              >
+                Menghapus..
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="inline-flex flex-shrink-0 justify-center items-center p-2 rounded-lg bg-gray-200 w-fit text-gray-800 text-sm"
+              >
+                Hapus
+              </button>
+            )}
           </div>
         </form>
       </div>

@@ -1,45 +1,48 @@
 "use client";
 import ProcessingButton from "@/components/Button/ProcessingButton";
 import MainInput from "@/components/Input/MainInput";
-import { AppDispatch, RootState } from "@/redux/store";
-import {
-  Label,
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
-} from "@headlessui/react";
-import Image from "next/image";
-import React, { SyntheticEvent, useState } from "react";
+import { dataRole } from "@/lib/api/masterDataApi";
+import { createUser } from "@/redux/features/user/userSlice";
+import { AppDispatch } from "@/redux/store";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { HiArrowLeft } from "react-icons/hi2";
-import { RiArrowDropDownLine } from "react-icons/ri";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
-const roles = [
-  {
-    id: 1,
-    name: "Koordinator Kecamatan",
-  },
-  {
-    id: 2,
-    name: "Koordinator Desa",
-  },
-];
-const MemberCreateModal = () => {
-  const [selectedProvince, setSelectedProvince] = useState(roles[0]);
-  const [name, setName] = useState("");
+interface Props {
+  teamId: number;
+}
+const MemberCreateModal = ({ teamId }: Props) => {
+  const [email, setEmail] = useState("");
+  const [fullname, setFullname] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<any[]>([]);
+  const [selectedRole, setSelectedRole] = useState("");
+
   const [modal, setModal] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  // const { loading } = useSelector((state: RootState) => state.rw);
   const [loading, setLoading] = useState(false);
 
+  const handleRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let roleId = e.target.value;
+    setSelectedRole(roleId);
+  };
   const handleCreate = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("name", name);
-      // await dispatch(createRw({ formData: formData }));
-      setName("");
+      formData.append("fullname", fullname);
+      formData.append("username", username);
+      formData.append("password", password);
+      formData.append("password_confirmation", confirmPassword);
+      formData.append("role", selectedRole);
+      formData.append("team_id", teamId.toString());
+      await dispatch(createUser({ formData: formData }));
+      setFullname("");
+      setUsername("");
+      setPassword("");
+      setConfirmPassword("");
       setModal(false);
     } catch (error) {
       console.log(error);
@@ -49,6 +52,12 @@ const MemberCreateModal = () => {
   const handleChange = () => {
     setModal(!modal);
   };
+
+  useEffect(() => {
+    (async () => {
+      setRole(dataRole);
+    })();
+  }, []);
 
   return (
     <div className="my-2">
@@ -81,11 +90,11 @@ const MemberCreateModal = () => {
                       <button
                         type="submit"
                         className={`py-2 px-3 w-full capitalize gap-x-2 text-sm font-semibold rounded-full border border-transparent  text-white disabled:pointer-events-none ${
-                          name
+                          fullname
                             ? "bg-indigo-500 hover:bg-indigo-600"
                             : "bg-slate-400 cursor-not-allowed"
                         }`}
-                        disabled={!name}
+                        disabled={!fullname}
                       >
                         Tambah
                       </button>
@@ -102,11 +111,11 @@ const MemberCreateModal = () => {
                     Nama Lengkap
                   </label>
                   <MainInput
-                    name="name"
+                    name="fullname"
                     type="text"
                     placeholder="Masukan nama lengkap"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={fullname}
+                    onChange={(e) => setFullname(e.target.value)}
                   />
                 </div>
                 <div className="">
@@ -114,14 +123,14 @@ const MemberCreateModal = () => {
                     htmlFor=""
                     className="block text-sm/6 font-medium text-gray-900"
                   >
-                   Username
+                    Username
                   </label>
                   <MainInput
                     name="name"
                     type="text"
                     placeholder="Masukan username"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
                 <div className="">
@@ -129,14 +138,14 @@ const MemberCreateModal = () => {
                     htmlFor=""
                     className="block text-sm/6 font-medium text-gray-900"
                   >
-                   Password
+                    Password
                   </label>
                   <MainInput
                     name="name"
                     type="password"
                     placeholder="Masukan password"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
                 <div className="">
@@ -144,62 +153,38 @@ const MemberCreateModal = () => {
                     htmlFor=""
                     className="block text-sm/6 font-medium text-gray-900"
                   >
-                   Konfirmasi Password
+                    Konfirmasi Password
                   </label>
                   <MainInput
                     name="name"
                     type="password"
                     placeholder="Masukan konfirmasi password"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                 </div>
 
-                <div className="">
-                  <Listbox
-                    value={selectedProvince}
-                    onChange={setSelectedProvince}
-                  >
-                    <Label className="block text-sm/6 font-medium text-gray-900">
-                      Pilih Peran
-                    </Label>
-                    <div className="relative mt-2">
-                      <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm/6">
-                        <span className="flex items-center">
-                          <span className="ml-3 block truncate">
-                            {selectedProvince.name}
-                          </span>
-                        </span>
-                        <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                          <RiArrowDropDownLine
-                            aria-hidden="true"
-                            className="h-5 w-5 text-gray-400"
-                          />
-                        </span>
-                      </ListboxButton>
-
-                      <ListboxOptions
-                        transition
-                        className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
-                      >
-                        {roles.map((person) => (
-                          <ListboxOption
-                            key={person.id}
-                            value={person}
-                            className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                          >
-                            <div className="flex items-center">
-                              <span className="ml-3 block truncate font-normal group-data-[selectedProvince]:font-semibold">
-                                {person.name}
-                              </span>
-                            </div>
-                          </ListboxOption>
-                        ))}
-                      </ListboxOptions>
-                    </div>
-                  </Listbox>
+                <div className=" flex flex-col items-start my-2 w-full">
+                  <label htmlFor="">Peran</label>
+                  <dd className="text-sm my-1 leading-6 text-gray-700 w-full relative">
+                    <select
+                      className="border p-4  bg-white rounded-md  text-black capitalize w-full "
+                      name="level"
+                      value={selectedRole}
+                      onChange={handleRole}
+                    >
+                      <option value="">Pilih Level</option>
+                      {role.map(
+                        (data, index) =>
+                          index > 0 && (
+                            <option key={index} value={data.id}>
+                              {data.name}
+                            </option>
+                          )
+                      )}
+                    </select>
+                  </dd>
                 </div>
-
               </div>
             </div>
           </div>

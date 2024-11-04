@@ -7,37 +7,38 @@ import { BsArrowLeft } from "react-icons/bs";
 import InputWithIcon from "@/components/Input/InputWithIcon";
 import ProcessingButton from "@/components/Button/ProcessingButton";
 import { User } from "@/lib/types/userType";
-import { updateUsername } from "@/redux/features/auth/authSlice";
 import { useRouter } from "next/navigation";
 import { ListPulseLoader } from "@/components/Loader/MainLoader";
 import { FiUser } from "react-icons/fi";
+import { changeFullname } from "@/redux/features/user/userSlice";
 
 interface Props {
   user?: User;
+  userId?: number
 }
-const UsernameEditModal = ({ user }: Props) => {
-  const [username, setUsername] = useState<string | any>(user?.username);
-  const [validationUsername, setValidationUsername] = useState([]);
+const ChangeFullnameModal = ({ user, userId }: Props) => {
+  const [fullname, setFullname] = useState<string | any>(user?.fullname);
+  const [validationFullname, setValidationFullname] = useState([]);
   const [modal, setModal] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const { message, loading } = useSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.user
   );
 
   const router = useRouter();
   const handleUpdate = async (e: SyntheticEvent) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("username", username);
+    formData.append("fullname", fullname);
     try {
-      const data = await dispatch(updateUsername({ formData }));
+      const data = await dispatch(changeFullname({ formData:formData, id: userId as number }));
       if (data.payload.code === 422) {
-        setValidationUsername(message.username);
+        setValidationFullname(message.fullname);
         setModal(true);
       }
       if (data.payload.code === 200) {
         setModal(false);
-        router.push(`/profile/${user?.id}`);
+        router.push(`/members/${user?.team_id.id}`);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -56,8 +57,8 @@ const UsernameEditModal = ({ user }: Props) => {
           onClick={handleChange}
           className="w-full  bg-white peer py-2 ps-6 block font-normal text-start text-md outline-none transition text-gray-700 focus:border-primary-600 active:border-primary-600  active:bg-white disabled:cursor-default disabled:bg-white"
         >
-          {user?.username ? (
-            <>{user?.username}</>
+          {user?.fullname ? (
+            <>{user?.fullname}</>
           ) : (
             <div className="w-full py-2 px-6">
               <ListPulseLoader />
@@ -100,19 +101,19 @@ const UsernameEditModal = ({ user }: Props) => {
                 <div className="relative">
                   <InputWithIcon
                     type="text"
-                    name="username"
-                    placeholder="Username"
-                    onChange={(e) => setUsername(e.target.value)}
-                    value={username}
+                    name="fullname"
+                    placeholder="Nama Lengkap"
+                    onChange={(e) => setFullname(e.target.value)}
+                    value={fullname}
                     disable={false}
                   />
                   <div className="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-4 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                   <FiUser size={20}/>
                   </div>
                 </div>
-                {validationUsername && (
+                {validationFullname && (
                   <span className="text-sm text-red-500">
-                    {validationUsername}
+                    {validationFullname}
                   </span>
                 )}
               </div>
@@ -124,4 +125,4 @@ const UsernameEditModal = ({ user }: Props) => {
   );
 };
 
-export default UsernameEditModal;
+export default ChangeFullnameModal;

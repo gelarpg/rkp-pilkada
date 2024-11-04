@@ -1,4 +1,4 @@
-import { changePasswordApi, forgotPasswordlApi, loginApi, registerApi, resetPasswordlApi, updateAccountApi, updateEmailApi, updateUsernameApi } from "@/lib/api/authApi"
+import {  forgotPasswordlApi, loginApi, registerApi, resetPasswordlApi, updateAccountApi, updateEmailApi, updatePasswordApi, updateUsernameApi } from "@/lib/api/authApi"
 import { User } from "@/lib/types/userType"
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 
@@ -86,10 +86,10 @@ export const updateEmail = createAsyncThunk<any, { formData: FormData }>(
     }
 )
 
-export const changePassword = createAsyncThunk<any, { formData: FormData }>(
-    'auth/changePassword',
+export const updatePassword = createAsyncThunk<any, { formData: FormData }>(
+    'auth/updatePassword',
     async ({ formData }) => {
-        const response = await changePasswordApi(formData)
+        const response = await updatePasswordApi(formData)
         return response
     }
 )
@@ -213,16 +213,16 @@ const authSlice = createSlice({
                 state.loading = false
                 state.error = action.error.message || 'failed update account'
             })
-            .addCase(changePassword.pending, (state) => {
+            .addCase(updatePassword.pending, (state) => {
                 state.loading = true
             })
-            .addCase(changePassword.fulfilled, (state, action: PayloadAction<AuthState>) => {
+            .addCase(updatePassword.fulfilled, (state, action: PayloadAction<AuthState>) => {
                 state.loading = false
                 state.message = action.payload.message
                 console.log(state.message)
                 state.code = action.payload.code
             })
-            .addCase(changePassword.rejected, (state, action) => {
+            .addCase(updatePassword.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.error.message || 'failed update account'
             })

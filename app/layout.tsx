@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import store from "@/redux/store";
 import { Provider } from "react-redux";
+import PrelineScript from "@/components/PrelineScript";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,6 +30,7 @@ export default function RootLayout({
           {children}
         </body>
       </Provider>
+      <PrelineScript />
     </html>
   );
 }

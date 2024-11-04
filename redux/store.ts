@@ -5,6 +5,10 @@ import provinceSlice from './features/address/provinceSlice'
 import districtSlice from './features/address/districtSlice'
 import subdistrictSlice from './features/address/subdistrictSlice'
 import villageSlice from './features/address/villageSlice'
+import tpsSlice from './features/tps/tpsSlice'
+import professionSlice from './features/profession/professionSlice'
+import residentSlice from './features/resident/residentSlice'
+
 
 const store = configureStore({
     reducer: {
@@ -14,6 +18,9 @@ const store = configureStore({
         district: districtSlice,
         subdistrict: subdistrictSlice,
         village: villageSlice,
+        tps:tpsSlice,
+        profession:professionSlice,
+        resident:residentSlice,
     },
 })
 

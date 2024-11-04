@@ -1,7 +1,18 @@
 "use client";
 import ProcessingButton from "@/components/Button/ProcessingButton";
 import MainInput from "@/components/Input/MainInput";
-import { AppDispatch, RootState } from "@/redux/store";
+import { getDistrictApi } from "@/lib/api/districtApi";
+import { getProvinceApi } from "@/lib/api/provinceApi";
+import { getSubDistrictsApi } from "@/lib/api/subdistrictApi";
+import { getVillageApi } from "@/lib/api/villageApi";
+import {
+  District,
+  Province,
+  SubDistrict,
+  Village,
+} from "@/lib/types/addressType";
+import { createTps } from "@/redux/features/tps/tpsSlice";
+import { AppDispatch } from "@/redux/store";
 import {
   Label,
   Listbox,
@@ -9,104 +20,137 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react";
-import Image from "next/image";
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { HiArrowLeft } from "react-icons/hi2";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
-const provinces = [
-  {
-    id: 1,
-    name: "Jawa Barat",
-  },
-  {
-    id: 2,
-    name: "Jawa Tengah",
-  },
-  {
-    id: 3,
-    name: "Sumatera Selatan",
-  },
-  {
-    id: 4,
-    name: "Sumatera Utara",
-  },
-];
-const districts = [
-  {
-    id: 1,
-    name: "Kabupaten Muara Enim",
-  },
-  {
-    id: 2,
-    name: "Kabupaten Lahat",
-  },
-  {
-    id: 3,
-    name: "Kabupaten Garut",
-  },
-  {
-    id: 4,
-    name: "Kabupaten Bandung",
-  },
-];
-const subdistricts = [
-  {
-    id: 1,
-    name: "Kecamatan Benakat",
-  },
-  {
-    id: 2,
-    name: "Kecamatan Gunung Dalam",
-  },
-  {
-    id: 3,
-    name: "Kecamatan Cikajang",
-  },
-  {
-    id: 4,
-    name: "Kecamatan Cigedug",
-  },
-];
-const villages = [
-  {
-    id: 1,
-    name: "Tanjung Terang",
-  },
-  {
-    id: 2,
-    name: "Sumber Rahayu",
-  },
-  {
-    id: 3,
-    name: "Sumahaja Makmur",
-  },
-  {
-    id: 4,
-    name: "Pager Mewah",
-  },
-];
 const TpsCreateModal = () => {
-  const [selectedProvince, setSelectedProvince] = useState(provinces[0]);
-  const [selectedDistrict, setSelectedDistrict] = useState(districts[0]);
-  const [selectedSubdistrict, setSelectedSubdistrict] = useState(
-    subdistricts[0]
-  );
-  const [selectedVillage, setSelectedVillage] = useState(villages[0]);
-  const [name, setName] = useState("");
+  const [tpsData, setTpsData] = useState({
+    name: "",
+    provinces: [] as any[],
+    districts: [] as any[],
+    subdistricts: [] as any[],
+    villages: [] as any[],
+    selectedProvince: undefined as number | undefined,
+    selectedDistrict: undefined as number | undefined,
+    selectedSubDistrict: undefined as number | undefined,
+    selectedVillage: undefined as number | undefined,
+    validation: undefined as any | undefined,
+    loading: false,
+    validationName: [] as string[],
+    validationProvince: [] as string[],
+    validationDistrict: [] as string[],
+    validationSubDistrict: [] as string[],
+    validationVillage: [] as string[],
+  });
   const [modal, setModal] = useState(false);
+  const [enable, setEnable] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  // const { loading } = useSelector((state: RootState) => state.rw);
   const [loading, setLoading] = useState(false);
 
+  const setTpsField = (field: keyof typeof tpsData, value: any) => {
+    setTpsData((prevState) => ({ ...prevState, [field]: value }));
+  };
+  const handleProvinces = async (e: any) => {
+    let province_code = parseInt(e.target.value);
+    setTpsData((prevState) => ({
+      ...prevState,
+      selectedProvince: province_code,
+    }));
+    if (province_code !== 0) {
+      const dataDistricts = await getDistrictApi(province_code);
+      if (dataDistricts) {
+        setTpsData((prevState) => ({
+          ...prevState,
+          districts: dataDistricts.data,
+        }));
+        setEnable(false);
+      }
+    } else {
+      setEnable(true);
+    }
+  };
+
+  const handleDistrict = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let district_code = parseInt(e.target.value);
+    setTpsData((prevState) => ({
+      ...prevState,
+      selectedDistrict: district_code,
+    }));
+    if (district_code !== 0) {
+      const dataSubDistricts = await getSubDistrictsApi(district_code);
+      if (dataSubDistricts) {
+        setTpsData((prevState) => ({
+          ...prevState,
+          subdistricts: dataSubDistricts.data,
+        }));
+        setEnable(false);
+      }
+    } else {
+      setEnable(true);
+    }
+  };
+
+  const handleSubDistrict = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let subdistrict_code = parseInt(e.target.value);
+    setTpsData((prevState) => ({
+      ...prevState,
+      selectedSubDistrict: subdistrict_code,
+    }));
+    if (subdistrict_code !== 0) {
+      const dataVillages = await getVillageApi(subdistrict_code);
+      if (dataVillages) {
+        setTpsData((prevState) => ({
+          ...prevState,
+          villages: dataVillages.data,
+        }));
+        setEnable(false);
+      }
+    } else {
+      setEnable(true);
+    }
+  };
   const handleCreate = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("name", name);
-      // await dispatch(createRw({ formData: formData }));
-      setName("");
+      formData.append("name", tpsData.name);
+      formData.append(
+        "province_code",
+        tpsData.selectedProvince?.toString() || ""
+      );
+      formData.append(
+        "district_code",
+        tpsData.selectedDistrict?.toString() || ""
+      );
+      formData.append(
+        "subdistrict_code",
+        tpsData.selectedSubDistrict?.toString() || ""
+      );
+      formData.append(
+        "village_code",
+        tpsData.selectedVillage?.toString() || ""
+      );
+      await dispatch(createTps({ formData: formData }));
+      setTpsData({
+        name: "",
+        provinces: [] as any[],
+        districts: [] as any[],
+        subdistricts: [] as any[],
+        villages: [] as any[],
+        selectedProvince: undefined as number | undefined,
+        selectedDistrict: undefined as number | undefined,
+        selectedSubDistrict: undefined as number | undefined,
+        selectedVillage: undefined as number | undefined,
+        validation: undefined as any | undefined,
+        loading: false,
+        validationName: [] as string[],
+        validationProvince: [] as string[],
+        validationDistrict: [] as string[],
+        validationSubDistrict: [] as string[],
+        validationVillage: [] as string[],
+      })
       setModal(false);
     } catch (error) {
       console.log(error);
@@ -117,6 +161,13 @@ const TpsCreateModal = () => {
     setModal(!modal);
   };
 
+  useEffect(() => {
+    (async () => {
+      const dataProvinces = await getProvinceApi();
+      setTpsField("provinces", dataProvinces.data);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className="my-2">
       <button
@@ -148,11 +199,11 @@ const TpsCreateModal = () => {
                       <button
                         type="submit"
                         className={`py-2 px-3 w-full capitalize gap-x-2 text-sm font-semibold rounded-full border border-transparent  text-white disabled:pointer-events-none ${
-                          name
+                          tpsData.name
                             ? "bg-indigo-500 hover:bg-indigo-600"
                             : "bg-slate-400 cursor-not-allowed"
                         }`}
-                        disabled={!name}
+                        disabled={!tpsData.name}
                       >
                         Tambah
                       </button>
@@ -172,188 +223,81 @@ const TpsCreateModal = () => {
                     name="name"
                     type="text"
                     placeholder="Masukan nama TPS"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={tpsData.name}
+                    onChange={(e) =>
+                      setTpsData((prevData) => ({
+                        ...prevData,
+                        name: e.target.value,
+                      }))
+                    }
                   />
                 </div>
 
                 <div className="">
-                  <Listbox
-                    value={selectedProvince}
-                    onChange={setSelectedProvince}
+                  <select
+                    className="border p-3 bg-white rounded-lg  text-black capitalize w-full "
+                    name="province_code"
+                    value={tpsData.selectedProvince}
+                    onChange={handleProvinces}
                   >
-                    <Label className="block text-sm/6 font-medium text-gray-900">
-                      Pilih Provinsi
-                    </Label>
-                    <div className="relative mt-2">
-                      <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm/6">
-                        <span className="flex items-center">
-                          <span className="ml-3 block truncate">
-                            {selectedProvince.name}
-                          </span>
-                        </span>
-                        <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                          <RiArrowDropDownLine
-                            aria-hidden="true"
-                            className="h-5 w-5 text-gray-400"
-                          />
-                        </span>
-                      </ListboxButton>
-
-                      <ListboxOptions
-                        transition
-                        className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
-                      >
-                        {provinces.map((person) => (
-                          <ListboxOption
-                            key={person.id}
-                            value={person}
-                            className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                          >
-                            <div className="flex items-center">
-                              <span className="ml-3 block truncate font-normal group-data-[selectedProvince]:font-semibold">
-                                {person.name}
-                              </span>
-                            </div>
-                          </ListboxOption>
-                        ))}
-                      </ListboxOptions>
-                    </div>
-                  </Listbox>
+                    <option value="">Pilih Provinsi</option>
+                    {tpsData.provinces.map((data: Province) => (
+                      <option key={data.code} value={data.code}>
+                        {data.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="">
-                  <Listbox
-                    value={selectedDistrict}
-                    onChange={setSelectedDistrict}
+                  <select
+                    className="border p-3 bg-white rounded-lg  text-black capitalize w-full "
+                    name="province_code"
+                    value={tpsData.selectedDistrict}
+                    onChange={handleDistrict}
                   >
-                    <Label className="block text-sm/6 font-medium text-gray-900">
-                      Pilih Kabupaten
-                    </Label>
-                    <div className="relative mt-2">
-                      <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm/6">
-                        <span className="flex items-center">
-                          <span className="ml-3 block truncate">
-                            {selectedDistrict.name}
-                          </span>
-                        </span>
-                        <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                          <RiArrowDropDownLine
-                            aria-hidden="true"
-                            className="h-5 w-5 text-gray-400"
-                          />
-                        </span>
-                      </ListboxButton>
-
-                      <ListboxOptions
-                        transition
-                        className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
-                      >
-                        {districts.map((person) => (
-                          <ListboxOption
-                            key={person.id}
-                            value={person}
-                            className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                          >
-                            <div className="flex items-center">
-                              <span className="ml-3 block truncate font-normal group-data-[selectedDistrict]:font-semibold">
-                                {person.name}
-                              </span>
-                            </div>
-                          </ListboxOption>
-                        ))}
-                      </ListboxOptions>
-                    </div>
-                  </Listbox>
+                    <option value="">Pilih Kabupaten</option>
+                    {tpsData.districts.map((data: District) => (
+                      <option key={data.code} value={data.code}>
+                        {data.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="">
-                  <Listbox
-                    value={selectedSubdistrict}
-                    onChange={setSelectedSubdistrict}
+                  <select
+                    className="border p-3 bg-white rounded-lg  text-black capitalize w-full "
+                    name="province_code"
+                    value={tpsData.selectedSubDistrict}
+                    onChange={handleSubDistrict}
                   >
-                    <Label className="block text-sm/6 font-medium text-gray-900">
-                      Pilih Kecamatan
-                    </Label>
-                    <div className="relative mt-2">
-                      <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm/6">
-                        <span className="flex items-center">
-                          <span className="ml-3 block truncate">
-                            {selectedSubdistrict.name}
-                          </span>
-                        </span>
-                        <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                          <RiArrowDropDownLine
-                            aria-hidden="true"
-                            className="h-5 w-5 text-gray-400"
-                          />
-                        </span>
-                      </ListboxButton>
-
-                      <ListboxOptions
-                        transition
-                        className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
-                      >
-                        {subdistricts.map((person) => (
-                          <ListboxOption
-                            key={person.id}
-                            value={person}
-                            className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                          >
-                            <div className="flex items-center">
-                              <span className="ml-3 block truncate font-normal group-data-[selectedSubdistrict]:font-semibold">
-                                {person.name}
-                              </span>
-                            </div>
-                          </ListboxOption>
-                        ))}
-                      </ListboxOptions>
-                    </div>
-                  </Listbox>
+                    <option value="">Pilih Kecamatan</option>
+                    {tpsData.subdistricts.map((data: SubDistrict) => (
+                      <option key={data.code} value={data.code}>
+                        {data.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="">
-                  <Listbox
-                    value={selectedVillage}
-                    onChange={setSelectedVillage}
+                  <select
+                    className="border p-3  bg-white rounded-lg  text-black capitalize w-full "
+                    name="village_code"
+                    value={tpsData.selectedVillage}
+                    onChange={(e) =>
+                      setTpsData((prevData) => ({
+                        ...prevData,
+                        selectedVillage: parseInt(e.target.value),
+                      }))
+                    }
                   >
-                    <Label className="block text-sm/6 font-medium text-gray-900">
-                      Pilih Desa
-                    </Label>
-                    <div className="relative mt-2">
-                      <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm/6">
-                        <span className="flex items-center">
-                          <span className="ml-3 block truncate">
-                            {selectedVillage.name}
-                          </span>
-                        </span>
-                        <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                          <RiArrowDropDownLine
-                            aria-hidden="true"
-                            className="h-5 w-5 text-gray-400"
-                          />
-                        </span>
-                      </ListboxButton>
-
-                      <ListboxOptions
-                        transition
-                        className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
-                      >
-                        {villages.map((person) => (
-                          <ListboxOption
-                            key={person.id}
-                            value={person}
-                            className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                          >
-                            <div className="flex items-center">
-                              <span className="ml-3 block truncate font-normal group-data-[selectedVillage]:font-semibold">
-                                {person.name}
-                              </span>
-                            </div>
-                          </ListboxOption>
-                        ))}
-                      </ListboxOptions>
-                    </div>
-                  </Listbox>
+                    <option value="">Pilih Desa</option>
+                    {tpsData.villages.map((data: Village) => (
+                      <option key={data.code} value={data.code}>
+                        {data.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-
               </div>
             </div>
           </div>

@@ -7,10 +7,10 @@ import { BsArrowLeft } from "react-icons/bs";
 import ProcessingButton from "@/components/Button/ProcessingButton";
 import { User } from "@/lib/types/userType";
 import { useRouter } from "next/navigation";
-import { changePassword } from "@/redux/features/auth/authSlice";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { ListPulseLoader } from "@/components/Loader/MainLoader";
 import { RxLockClosed } from "react-icons/rx";
+import { changePassword } from "@/redux/features/user/userSlice";
 
 interface Props {
   user?: User;
@@ -40,7 +40,7 @@ const ChangePassModal = ({ user }: Props) => {
     formData.append("password", password);
     formData.append("password_confirmation", passwordConfirmation);
     try {
-      const data = await dispatch(changePassword({ formData }));
+      const data = await dispatch(changePassword({ formData:formData, id: user?.id as number}));
       console.log(data.payload.code);
 
       setValidationPassword(message.password);
@@ -69,7 +69,7 @@ const ChangePassModal = ({ user }: Props) => {
     }
     if (code === 200) {
       setModal(false);
-      router.push(`/profile/${user?.id}`);
+      router.push(`/members`);
     }
   }, [code, message, router, user]);
   return (

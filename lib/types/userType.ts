@@ -1,10 +1,12 @@
+import { Team } from "./teamType"
+
 export type User={
     id:number
     uuid:string
     fullname:string
     username:string
     email:string
-    level:number
-    peran_id:number
+    role:number
+    team_id:Team
     access_token:string
 }

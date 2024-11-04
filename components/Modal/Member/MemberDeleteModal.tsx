@@ -1,6 +1,7 @@
 "use client";
+import { deleteUser } from "@/redux/features/user/userSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
@@ -9,16 +10,14 @@ interface Props {
 }
 
 const MemberDeleteModal = ({ memberData, onClose }: Props) => {
-  const [loading, setLoading] = useState(false);
-
   const dispatch = useDispatch<AppDispatch>();
-  // const { loading } = useSelector((state: RootState) => state.category);
+  const { loading } = useSelector((state: RootState) => state.user);
 
   const handleDelete = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
       if (memberData) {
-        // dispatch(updateCategory({ id: memberData.id, formData: formData }));
+        dispatch(deleteUser({ user_id: memberData.id }));
         onClose();
       }
     } catch (error) {
@@ -32,7 +31,9 @@ const MemberDeleteModal = ({ memberData, onClose }: Props) => {
         <form onSubmit={handleDelete}>
           <div className="p-3">
             <h1 className="font-semibold text-xl">Hapus anggota ?</h1>
-            <p className="text-base">Anda akan menghapus anggota secara permanen</p>
+            <p className="text-base">
+              Anda akan menghapus anggota secara permanen
+            </p>
           </div>
           <div className="flex justify-end items-center gap-3 py-3 px-4 ">
             <button
@@ -42,13 +43,22 @@ const MemberDeleteModal = ({ memberData, onClose }: Props) => {
             >
               Batal
             </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex flex-shrink-0 justify-center items-center p-2 rounded-lg bg-gray-200 w-fit text-gray-800 text-sm"
-            >
-              Hapus
-            </button>
+            {loading ? (
+              <button
+                type="button"
+                className="inline-flex flex-shrink-0 justify-center items-center p-2 rounded-lg bg-gray-400 w-fit text-gray-800 text-sm"
+                disabled
+              >
+                <span className="loading"></span>Menghapus...
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="inline-flex flex-shrink-0 justify-center items-center p-2 rounded-lg bg-gray-200 w-fit text-gray-800 text-sm"
+              >
+                Hapus
+              </button>
+            )}
           </div>
         </form>
       </div>

@@ -5,9 +5,10 @@ import { BiEdit, BiTrash } from "react-icons/bi";
 import { HiDotsVertical } from "react-icons/hi";
 import TpsUpdateModal from "../Modal/Tps/TpsUpdateModal";
 import TpsDeleteModal from "../Modal/Tps/TpsDeleteModal";
+import { Tps } from "@/lib/types/TpsType";
 
 interface Props {
-  tpsData?: any;
+  tpsData?: Tps;
 }
 const TpsDropdown = ({ tpsData }: Props) => {
   const [openDelete, setOpenDelete] = useState(false);
@@ -57,10 +58,10 @@ const TpsDropdown = ({ tpsData }: Props) => {
         </div>
       </MenuItems>
       {openUpdate && (
-        <TpsUpdateModal tpsData={tpsData} onClose={toggleModalUpdate} />
+        <TpsUpdateModal tps={tpsData} onClose={toggleModalUpdate} />
       )}
       {openDelete && (
-        <TpsDeleteModal tpsData={tpsData} onClose={toggleModalDelete} />
+        <TpsDeleteModal tps={tpsData} onClose={toggleModalDelete} />
       )}
     </Menu>
   );
