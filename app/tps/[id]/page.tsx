@@ -131,7 +131,7 @@ const Page = ({ params }: Props) => {
         <p>{residents.length} Warga</p>
         <Link
           href={`/tps/${tps?.id}/resident/${tps?.village_code.code}/create`}
-          className="bg-indigo-500 text-white px-2 py-1 rounded-lg"
+          className="bg-indigo-600 text-white px-2 py-1 rounded-lg"
         >
           Tambah Data Pemilih
         </Link>

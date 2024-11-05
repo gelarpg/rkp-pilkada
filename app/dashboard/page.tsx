@@ -28,6 +28,7 @@ const Page = () => {
           </p>
         </div>
         {user?.role === 2 && <TpsCreateModal />}
+        {user?.role === 4 && <TpsCreateModal />}
       </div>
       <TpsCard />
     </MainLayout>

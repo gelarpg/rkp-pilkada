@@ -212,8 +212,8 @@ const ResidentCreateForm = ({ id, villageCode }: Props) => {
                   value={nik}
                   onChange={(e) => setNik(e.target.value)}
                 />
-                {validateNik && (
-                  <span className="text-sm text-red-500">{validateNik}</span>
+                {message?.nik && (
+                  <span className="text-sm text-red-500">{message?.nik}</span>
                 )}
               </div>
             </div>

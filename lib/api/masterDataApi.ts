@@ -61,11 +61,11 @@ export const dataReligion: any[] = [
 export const dataMaritalStatus: any[] = [
     {
         id: 1,
-        name: "Menikah"
+        name: "Kawin"
     },
     {
         id: 2,
-        name: "Belum Menikah"
+        name: "Belum Kawin"
     },
     {
         id: 3,

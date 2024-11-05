@@ -41,10 +41,6 @@ const TpsCard = () => {
           <p className="text-gray-500 my-3 capitalize"> {data.district_code.name}, Kecamatan {" "}
             {data.subdistrict_code.name}, {data.village_code.name}
           </p>
-          {/* <p className="text-gray-500">
-            <span className="font-semibold">Pemilih :</span> {data.voter_total}{" "}
-            Orang
-          </p> */}
         </div>
       ))}
     </div>

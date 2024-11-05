@@ -3,6 +3,8 @@ import { User } from "@/lib/types/userType";
 import React, { useState } from "react";
 import { ListPulseLoader } from "../Loader/MainLoader";
 import MemberDropdown from "../Dropdown/MemberDropdown";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
   users?: User[];
@@ -17,8 +19,11 @@ const MemberTable = ({
   lastElementRef,
 }: Props) => {
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.user);
   return (
-    <div  className="overflow-x-scroll lg:overflow-hidden pb-12">
+    <div className="overflow-x-scroll lg:overflow-hidden pb-12">
       <table className="min-w-full divide-y divide-gray-200 ">
         <thead>
           <tr>
@@ -46,12 +51,14 @@ const MemberTable = ({
             >
               Peran
             </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-start text-sm font-medium text-gray-500 uppercase"
-            >
-              Aksi
-            </th>
+            {user?.role === 2 && (
+              <th
+                scope="col"
+                className="px-6 py-3 text-start text-sm font-medium text-gray-500 uppercase"
+              >
+                Aksi
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -93,9 +100,11 @@ const MemberTable = ({
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    <MemberDropdown memberData={data} />
-                  </td>
+                  {user?.role === 2 && (
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                      <MemberDropdown memberData={data} />
+                    </td>
+                  )}
                 </tr>
               ))}
               {loading && <ListPulseLoader />}
@@ -107,7 +116,9 @@ const MemberTable = ({
                   className="odd:bg-white even:bg-gray-100"
                   key={index}
                   ref={
-                    index === searchResult.length - 1 ? lastElementRef : undefined
+                    index === searchResult.length - 1
+                      ? lastElementRef
+                      : undefined
                   }
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
@@ -136,9 +147,11 @@ const MemberTable = ({
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    <MemberDropdown memberData={data} />
-                  </td>
+                  {user?.role === 2 && (
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                      <MemberDropdown memberData={data} />
+                    </td>
+                  )}
                 </tr>
               ))}
             </>

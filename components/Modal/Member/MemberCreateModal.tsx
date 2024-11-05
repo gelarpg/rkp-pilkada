@@ -3,10 +3,10 @@ import ProcessingButton from "@/components/Button/ProcessingButton";
 import MainInput from "@/components/Input/MainInput";
 import { dataRole } from "@/lib/api/masterDataApi";
 import { createUser } from "@/redux/features/user/userSlice";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, RootState } from "@/redux/store";
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import { HiArrowLeft } from "react-icons/hi2";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
   teamId: number;
@@ -22,6 +22,8 @@ const MemberCreateModal = ({ teamId }: Props) => {
 
   const [modal, setModal] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  
+  const { user } = useSelector((state: RootState) => state.user);
   const [loading, setLoading] = useState(false);
 
   const handleRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -174,6 +176,19 @@ const MemberCreateModal = ({ teamId }: Props) => {
                       onChange={handleRole}
                     >
                       <option value="">Pilih Level</option>
+                      {user?.role === 3 ?(
+                        <>
+                        {role.map(
+                          (data, index) =>
+                            index > 1 && (
+                              <option key={index} value={data.id}>
+                                {data.name}
+                              </option>
+                            )
+                        )}
+                        </>
+                      ):(
+                        <>
                       {role.map(
                         (data, index) =>
                           index > 0 && (
@@ -181,6 +196,8 @@ const MemberCreateModal = ({ teamId }: Props) => {
                               {data.name}
                             </option>
                           )
+                      )}
+                        </>
                       )}
                     </select>
                   </dd>
