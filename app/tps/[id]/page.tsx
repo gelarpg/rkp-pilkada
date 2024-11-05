@@ -1,5 +1,5 @@
 "use client";
-import { ListPulseLoader, TableLoader } from "@/components/Loader/MainLoader";
+import { TableLoader } from "@/components/Loader/MainLoader";
 import ResidentTable from "@/components/Table/ResidentTable";
 import useDebounce from "@/hook/useDebounce";
 import MainLayout from "@/layout/MainLayout";
@@ -104,14 +104,6 @@ const Page = ({ params }: Props) => {
   const handleRefresh = (e: SyntheticEvent) => {
     e.preventDefault();
     dispatch(resetResident());
-    // dispatch(
-    //   searchResident({
-    //     tpsId: tpsId as number,
-    //     fullname: query,
-    //     page: 1,
-    //     limit:10,
-    //   })
-    // );
     router.refresh();
     setQuery("");
   };
@@ -132,100 +124,79 @@ const Page = ({ params }: Props) => {
   }, [params]);
   return (
     <MainLayout>
-      {loading ? (
-        <ListPulseLoader />
-      ) : (
-        <>
-        <div className="flex flex-col lg:flex-row justify-start lg:justify-between items-start lg:items-center mb-3">
-          <h1 className="text-xl font-semibold text-gray-800">
-            Daftar Pemilih di {tps?.name}
-          </h1>
-          <Link
+      <div className="flex flex-col lg:flex-row justify-start lg:justify-between items-start lg:items-center mb-3">
+        <h1 className="text-xl font-semibold text-gray-800">
+          Daftar Pemilih di {tps?.name}
+        </h1>
+        <Link
           href={`/tps/${tps?.id}/resident/${tps?.village_code.code}/create`}
           className="bg-indigo-500 text-white px-2 py-1 rounded-lg"
         >
           Tambah Data Pemilih
         </Link>
+      </div>
+      <div className="relative">
+        <input
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              handleSearch(e);
+            }
+          }}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          type="text"
+          name="search"
+          placeholder="Cari nama warga disini"
+          className="w-full rounded-xl border-[1.5px] border-stroke bg-white peer py-2 ps-4 block font-normal text-md outline-none transition text-gray-900 focus:border-indigo-600 active:border-indigo-600  active:bg-white disabled:cursor-default disabled:bg-white"
+        />
+        <button
+          onClick={handleSearch}
+          className="px-2 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-600 text-white absolute top-1 right-1 flex justify-center items-center"
+        >
+          Cari
+        </button>
+      </div>
+      {loading && residents.length === 0 ? (
+        <div className="mt-4">
+          <TableLoader />
         </div>
-          {residents.length > 0 ? (
-            <>
-              <div className="relative">
-                <input
-                  onKeyUp={(e) => {
-                    if (e.key === "Enter") {
-                      handleSearch(e);
-                    }
-                  }}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  type="text"
-                  name="search"
-                  placeholder="Cari nama warga disini"
-                  className="w-full rounded-xl border-[1.5px] border-stroke bg-white peer py-2 ps-4 block font-normal text-md outline-none transition text-gray-900 focus:border-indigo-600 active:border-indigo-600  active:bg-white disabled:cursor-default disabled:bg-white"
-                />
-                <button
-                  onClick={handleSearch}
-                  className="px-2 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-600 text-white absolute top-1 right-1 flex justify-center items-center"
-                >
-                  Cari
-                </button>
-              </div>
-              {loading && residents.length === 0 ? (
-                <div className="mt-4">
-                  <TableLoader />
-                </div>
-              ) : (
-                <>
-                  {searchResult.length > 0 && (
-                    <div className="flex items-center justify-start gap-2 my-2">
-                      <button
-                        onClick={handleRefresh}
-                        className="px-2 py-1 text-sm rounded-full bg-indigo-600 hover:bg-indigo-600 text-white flex justify-center items-center gap-3"
-                      >
-                        Segarkan
-                        <HiRefresh size={20} />
-                      </button>
-                      <h1 className="font-semibold text-base text-gray-900">
-                        Hasil pencarian
-                      </h1>
-                    </div>
-                  )}
-
-                  {code === 404 ? (
-                    <div className="flex justify-center items-center flex-col-reverse my-1">
-                      <button
-                        onClick={handleRefresh}
-                        className="px-2 py-1 text-sm rounded-full bg-indigo-600 hover:bg-indigo-600 text-white flex justify-center items-center gap-3"
-                      >
-                        Segarkan
-                        <HiRefresh size={20} />
-                      </button>
-                      <p className="text-center my-3">
-                        Pencarian tidak ditemukan
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="">
-                      <ResidentTable
-                        residents={residents}
-                        lastElementRef={lastElementRef}
-                        lastElementRefSearch={lastElementRefSearch}
-                        searchResult={searchResult}
-                      />
-                    </div>
-                  )}
-                </>
-              )}
-            </>
-          ) : (
-            <>
-            {code === 404 && (
-            <div className="text-center text-gray-500">
-              Tidak ada data pemilih
+      ) : (
+        <>
+          {searchResult.length > 0 && (
+            <div className="flex items-center justify-start gap-2 my-2">
+              <button
+                onClick={handleRefresh}
+                className="px-2 py-1 text-sm rounded-full bg-indigo-600 hover:bg-indigo-600 text-white flex justify-center items-center gap-3"
+              >
+                Segarkan
+                <HiRefresh size={20} />
+              </button>
+              <h1 className="font-semibold text-base text-gray-900">
+                Hasil pencarian
+              </h1>
             </div>
-            )}
-            <TableLoader />
-            </>
+          )}
+
+          {code === 404 ? (
+            <div className="flex justify-center items-center flex-col-reverse my-1">
+              <button
+                onClick={handleRefresh}
+                className="px-2 py-1 text-sm rounded-full bg-indigo-600 hover:bg-indigo-600 text-white flex justify-center items-center gap-3"
+              >
+                Segarkan
+                <HiRefresh size={20} />
+              </button>
+              <p className="text-center my-3">Pencarian tidak ditemukan</p>
+            </div>
+          ) : (
+            <div className="">
+              <ResidentTable
+                residents={residents}
+                lastElementRef={lastElementRef}
+                lastElementRefSearch={lastElementRefSearch}
+                searchResult={searchResult}
+              />
+            </div>
           )}
         </>
       )}

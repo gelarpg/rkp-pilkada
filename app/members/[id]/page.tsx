@@ -88,7 +88,6 @@ const Page = ({ params }: Props) => {
   const handleRefresh = (e: SyntheticEvent) => {
     e.preventDefault();
     dispatch(resetUser());
-    // dispatch(getUserByTeam({ team_id: teamId as number, page: 1, limit:10 }));
     router.refresh();
     setQuery("");
   };
