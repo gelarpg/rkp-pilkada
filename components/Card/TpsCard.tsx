@@ -5,13 +5,16 @@ import Link from "next/link";
 import { getTpsList } from "@/redux/features/tps/tpsSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "@/redux/features/user/userSlice";
 
 const TpsCard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { tps_list, code } = useSelector((state: RootState) => state.tps);
+  const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     dispatch(getTpsList());
+    dispatch(getUser());
   }, [dispatch]);
   return (
     <>
@@ -31,7 +34,9 @@ const TpsCard = () => {
                 {data.name}
               </h3>
             </Link>
-            <TpsDropdown tpsData={data} />
+            {user?.role === 2 &&(
+              <TpsDropdown tpsData={data} />
+            )}
           </div>
           <p className="text-gray-500 my-3 capitalize"> {data.district_code.name}, Kecamatan {" "}
             {data.subdistrict_code.name}, {data.village_code.name}

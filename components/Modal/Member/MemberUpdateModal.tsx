@@ -85,7 +85,17 @@ const MemberUpdateModal = ({ memberData, onClose }: Props) => {
               {loading ? (
                 <ProcessingButton name="memperbaharui" />
               ) : (
-                <SaveButton name="perbaharui" />
+                <button
+                type="submit"
+                className={`py-2 px-3 w-full capitalize gap-x-2 text-sm font-semibold rounded-full border border-transparent  text-white disabled:pointer-events-none ${
+                  fullname
+                    ? "bg-indigo-500 hover:bg-indigo-600"
+                    : "bg-slate-400 cursor-not-allowed"
+                }`}
+                disabled={!fullname}
+              >
+                Perbarui
+              </button>
               )}
             </div>
           </div>
@@ -102,7 +112,7 @@ const MemberUpdateModal = ({ memberData, onClose }: Props) => {
               name="fullname"
               type="text"
               placeholder="Masukan nama lengkap"
-              value={fullname || memberData?.fullname}
+              value={fullname}
               onChange={(e) => setFullname(e.target.value)}
             />
           </div>
@@ -117,7 +127,7 @@ const MemberUpdateModal = ({ memberData, onClose }: Props) => {
               name="username"
               type="text"
               placeholder="Masukan username"
-              value={username || memberData?.username}
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>

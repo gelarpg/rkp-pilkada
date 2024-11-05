@@ -128,6 +128,7 @@ const Page = ({ params }: Props) => {
         <h1 className="text-xl font-semibold text-gray-800">
           Daftar Pemilih di {tps?.name}
         </h1>
+        <p>{residents.length} Warga</p>
         <Link
           href={`/tps/${tps?.id}/resident/${tps?.village_code.code}/create`}
           className="bg-indigo-500 text-white px-2 py-1 rounded-lg"

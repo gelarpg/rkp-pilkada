@@ -18,15 +18,12 @@ import { HiMiniBars3, HiXMark } from "react-icons/hi2";
 import { PiGear } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 
-
-
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
   const navigation = [
     { name: "Dashboard", href: `/dashboard` },
     // { name: "Data TPS", href: `/tps` },
-    { name: "Anggota", href: `/members/${user?.team_id.id}` },
   ];
 
   useEffect(() => {
@@ -67,34 +64,28 @@ const Navbar = () => {
               <div className="flex space-x-4">
                 {navigation.map((item) => (
                   <Link
-                  key={item.name}
-                  href={item.href}
-                  className="bg-gray-900  text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                    key={item.name}
+                    href={item.href}
+                    className="bg-gray-900  text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                   >
                     {item.name}
                   </Link>
                 ))}
-                {user?.role === 1 && (
-                  <>
-                    <Link
-                      href={"/korkab"}
-                      className="bg-gray-900  text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                    >
-                      Korkab
-                    </Link>
-                    <Link
-                      href={"/teams"}
-                      className="bg-gray-900  text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                    >
-                      Tim
-                    </Link>
-                    <Link
-                      href={"/professions"}
-                      className="bg-gray-900  text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                    >
-                      Pekerjaan
-                    </Link>
-                  </>
+                {user?.role === 2 && (
+                  <Link
+                    href={`/members/${user?.team_id.id}`}
+                    className="bg-gray-900  text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                  >
+                    Anggota
+                  </Link>
+                )}
+                {user?.role === 3 && (
+                  <Link
+                    href={`/members/${user?.team_id.id}`}
+                    className="bg-gray-900  text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                  >
+                    Anggota
+                  </Link>
                 )}
               </div>
             </div>
@@ -106,7 +97,10 @@ const Navbar = () => {
                 <MenuButton className="relative flex items-center gap-1 rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
-                  <p className="text-white font-semibold w-20 lg:w-fit line-clamp-1"> Hai, {user?.fullname}</p>
+                  <p className="text-white font-semibold w-20 lg:w-fit line-clamp-1">
+                    {" "}
+                    Hai, {user?.fullname}
+                  </p>
                   {user?.role === 1 ? (
                     <Image
                       width={32}
@@ -159,27 +153,21 @@ const Navbar = () => {
               {item.name}
             </Link>
           ))}
-          {user?.role === 1 && (
-            <>
-              <Link
-                href={"/korkab"}
-                className="bg-gray-900 text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-              >
-                Korkab
-              </Link>
-              <Link
-                href={"/team"}
-                className="bg-gray-900 text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-              >
-                Tim
-              </Link>
-              <Link
-                href={"/professions"}
-                className="bg-gray-900 text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-              >
-                Pekerjaan
-              </Link>
-            </>
+          {user?.role === 2 && (
+            <Link
+              href={`/members/${user?.team_id.id}`}
+              className="bg-gray-900 text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            >
+              Anggota
+            </Link>
+          )}
+          {user?.role === 3 && (
+            <Link
+              href={`/members/${user?.team_id.id}`}
+              className="bg-gray-900 text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            >
+              Anggota
+            </Link>
           )}
         </div>
       </DisclosurePanel>
