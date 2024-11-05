@@ -340,10 +340,11 @@ const userSlice = createSlice({
             })
             .addCase(changePassword.fulfilled, (state, action: PayloadAction<any>) => {
                 state.loading = false
+                state.code = action.payload.code
+                state.message = action.payload.message
+                console.log(state.message);
                 const user = { ...state.users, ...action.payload.data };
                 state.users = state.users.map((u) => (u.id === user.id ? user : u));
-                state.message = action.payload.message
-                state.code = action.payload.code
             })
             .addCase(changePassword.rejected, (state, action) => {
                 state.loading = false

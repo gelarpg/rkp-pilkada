@@ -31,14 +31,14 @@ const ChangeFullnameModal = ({ user, userId }: Props) => {
     const formData = new FormData();
     formData.append("fullname", fullname);
     try {
-      const data = await dispatch(changeFullname({ formData:formData, id: userId as number }));
+      const data = await dispatch(changeFullname({ formData:formData, id: user?.id as number }));
       if (data.payload.code === 422) {
         setValidationFullname(message.fullname);
         setModal(true);
       }
       if (data.payload.code === 200) {
         setModal(false);
-        router.push(`/members/${user?.team_id.id}`);
+        router.push('/dashboard');
       }
     } catch (error) {
       console.error("Error:", error);

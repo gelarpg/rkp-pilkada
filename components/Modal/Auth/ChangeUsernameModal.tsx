@@ -37,7 +37,7 @@ const ChangeUsernameModal = ({ user }: Props) => {
       }
       if (data.payload.code === 200) {
         setModal(false);
-        router.push(`/members/${user?.team_id.id}`);
+        router.push(`/dashboard`);
       }
     } catch (error) {
       console.error("Error:", error);
