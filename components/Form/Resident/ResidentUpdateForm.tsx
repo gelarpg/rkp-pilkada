@@ -1,39 +1,70 @@
 "use client";
 
-import { getRwApi, getRtApi, dataCitizen, dataReligion, dataMaritalStatus, dataGender } from "@/lib/api/masterDataApi";
+import {
+  getRwApi,
+  getRtApi,
+  dataCitizen,
+  dataReligion,
+  dataMaritalStatus,
+  dataGender,
+} from "@/lib/api/masterDataApi";
 import { getProfessionListApi } from "@/lib/api/professionApi";
-import { getTpsIdApi, getTpsListApi } from "@/lib/api/tpsApi";
-import { getVillageByIdApi } from "@/lib/api/villageApi";
+import { getTpsListApi } from "@/lib/api/tpsApi";
 import { Resident } from "@/lib/types/residentType";
 import { updateResident } from "@/redux/features/resident/residentSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-
-interface Props{
-    resident?:Resident
+interface Props {
+  resident?: Resident;
 }
-const ResidentUpdateForm = ({resident}:Props) => {
+const ResidentUpdateForm = ({ resident }: Props) => {
   const [loading, setLoading] = useState(false);
   const [tps, setTps] = useState([]);
   const [nik, setNik] = useState<any>(resident?.nik);
   const [fullname, setFullname] = useState<any>(resident?.fullname);
   const [bornPlace, setBornPlace] = useState<any>(resident?.born_place);
   const [birthdate, setBirthdate] = useState<any>(resident?.birthdate);
+  const [address, setAddress] = useState<any>(resident?.address);
   const [gender, setGender] = useState<any>([]);
   const [religion, setReligion] = useState<any>([]);
+  const [maritalStatus, setMaritalStatus] = useState<any>([]);
+  const [citizen, setCitizen] = useState<any>([]);
   const [bloodType, setBloodType] = useState<any>(resident?.blood_type);
+  const [profession, setProfession] = useState<any>([]);
+  const [validUntil, setValidUntil] = useState("SEUMUR HIDUP");
   const [rw, setRw] = useState([]);
   const [rt, setRt] = useState([]);
   const [selectedTps, setSelectedTps] = useState<any>(resident?.tps_id.id);
   const [selectedGender, setSelectedGender] = useState<any>(resident?.gender);
+  const [selectedReligion, setSelectedReligion] = useState<any>(
+    resident?.religion
+  );
+  console.log(selectedReligion)
+  const [selectedMaritalStatus, setSelectedMaritalStatus] = useState<any>(
+    resident?.marital_status_id
+  );
+  const [selectedCitizen, setSelectedCitizen] = useState<any>(
+    resident?.citizenship
+  );
+  const [selectedRw, setSelectedRw] = useState<any>(resident?.rw_id.id);
+  const [selectedRt, setSelectedRt] = useState<any>(resident?.rt_id.id);
+  const [selectedVillage, setSelectedVillage] = useState<any>(
+    resident?.village_code
+  );
+  const [selectedSubdistrict, setSelectedSubdistrict] = useState<any>(
+    resident?.subdistrict_code
+  );
+  const [selectedProfession, setSelectedProfession] = useState<any>(
+    resident?.profession_id.id
+  );
+  const [validateNik, setValidateNik] = useState<any[]>([]);
 
-  const [selectedRw, setSelectedRw] = useState(resident?.rw_id);
-  const [selectedRt, setSelectedRt] = useState(resident?.rt_id);
-
-
+  const dispatch = useDispatch<AppDispatch>();
+  const { message } = useSelector((state: RootState) => state.resident);
+  const router = useRouter();
   const handleTps = (e: React.ChangeEvent<HTMLSelectElement>) => {
     let tpsId = e.target.value;
     setSelectedTps(tpsId);
@@ -42,21 +73,79 @@ const ResidentUpdateForm = ({resident}:Props) => {
     let genderName = e.target.value;
     setSelectedGender(genderName);
   };
-  const handleUpdate = (e: SyntheticEvent) => {
-    
-  }
 
-  useEffect(()=>{
+  const handleReligion = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let religionName = e.target.value;
+    setSelectedReligion(religionName);
+  };
+  const handleCitizen = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let citizenName = e.target.value;
+    setSelectedCitizen(citizenName);
+  };
+  const handleMaritalStatus = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let maritalStatusId = e.target.value;
+    setSelectedMaritalStatus(maritalStatusId);
+  };
+  const handleProfession = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let professionId = e.target.value;
+    setSelectedProfession(professionId);
+  };
+  const handleUpdate = async (e: SyntheticEvent) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("tps_id", selectedTps);
+      formData.append("nik", nik);
+      formData.append("fullname", fullname);
+      formData.append("gender", selectedGender);
+      formData.append("born_place", bornPlace);
+      formData.append("birthdate", birthdate);
+      formData.append("religion", selectedReligion);
+      formData.append("blood_type", bloodType);
+      formData.append("address", address);
+      formData.append("rw_id", selectedRw?.toString() || "");
+      formData.append("rt_id", selectedRt?.toString() || "");
+      formData.append("village_code", selectedVillage.code || "");
+      formData.append("subdistrict_code", selectedSubdistrict.code || "");
+      formData.append("marital_status_id", selectedMaritalStatus);
+      formData.append("profession_id", selectedProfession);
+      formData.append("citizenship", selectedCitizen);
+      formData.append("valid_until", validUntil);
+      if (resident) {
+        const res = (await dispatch(
+          updateResident({ id: resident.id, formData: formData })
+        )) as {
+          payload: any;
+        };
+        setLoading(false);
+        if (res.payload.code === 422) {
+          setValidateNik(message.nik);
+        }
+        if (res.payload.code === 200) {
+          router.push(`/tps/${resident?.tps_id.id}`);
+        }
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
     (async () => {
       const dataTps = await getTpsListApi();
+      const dataRw = await getRwApi();
+      const dataRt = await getRtApi();
+      const dataProfession = await getProfessionListApi();
       setTps(dataTps.data);
-      
+      setRw(dataRw.data);
+      setRt(dataRt.data);
       setGender(dataGender);
+      setReligion(dataReligion);
+      setMaritalStatus(dataMaritalStatus);
+      setCitizen(dataCitizen);
+      setProfession(dataProfession.data);
     })();
-  }, [])
+  }, []);
 
-
- return (
+  return (
     <form onSubmit={handleUpdate}>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
@@ -83,7 +172,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
                 onChange={handleTps}
               >
                 <option value="">Pilih TPS</option>
-                {tps.map((data:any) => (
+                {tps.map((data: any) => (
                   <option key={data.id} value={data.id}>
                     {data.name}
                   </option>
@@ -109,9 +198,9 @@ const ResidentUpdateForm = ({resident}:Props) => {
                   value={nik || resident?.nik}
                   onChange={(e) => setNik(e.target.value)}
                 />
-                {/* {validateNik && (
+                {validateNik && (
                   <span className="text-sm text-red-500">{validateNik}</span>
-                )} */}
+                )}
               </div>
             </div>
             <div className="sm:col-span-6">
@@ -172,7 +261,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
                 />
               </div>
             </div>
-            
+
             <div className="sm:col-span-3 flex flex-col lg:flex-row gap-4">
               <div className="sm:w-fit">
                 <label
@@ -190,7 +279,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
                     onChange={handleGender}
                   >
                     <option value="">Pilih Jenis Kelamin</option>
-                    {gender.map((data:any) => (
+                    {gender.map((data: any) => (
                       <option key={data.id} value={data.name}>
                         {data.name}
                       </option>
@@ -219,7 +308,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
               </div>
             </div>
 
-            {/* <div className="col-span-full">
+            <div className="col-span-full">
               <label
                 htmlFor="address"
                 className="block text-sm/6 font-medium text-gray-900"
@@ -233,13 +322,13 @@ const ResidentUpdateForm = ({resident}:Props) => {
                   type="text"
                   placeholder="Masukan alamat"
                   className="block w-full rounded-md border py-1.5 px-2 text-gray-900 shadow-sm  placeholder:text-gray-400  sm:text-sm/6"
-                  value={address}
+                  value={address || resident?.address}
                   onChange={(e) => setAddress(e.target.value)}
                 />
               </div>
-            </div> */}
+            </div>
 
-            {/* <div className="sm:col-span-4  flex flex-col lg:flex-row justify-between gap-4 w-full">
+            <div className="sm:col-span-4  flex flex-col lg:flex-row justify-between gap-4 w-full">
               <div className="w-1/4">
                 <label
                   htmlFor="rt_id"
@@ -256,7 +345,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
                     onChange={(e) => setSelectedRt(e.target.value)}
                   >
                     <option value="">Pilih RT</option>
-                    {rt.map((data) => (
+                    {rt.map((data: any) => (
                       <option key={data.id} value={data.id}>
                         {data.name}
                       </option>
@@ -280,7 +369,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
                     onChange={(e) => setSelectedRw(e.target.value)}
                   >
                     <option value="">Pilih RW</option>
-                    {rw.map((data) => (
+                    {rw.map((data: any) => (
                       <option key={data.id} value={data.id}>
                         {data.name}
                       </option>
@@ -321,20 +410,18 @@ const ResidentUpdateForm = ({resident}:Props) => {
                     id="subdistrict"
                     name="subdistrict"
                     className="block w-full rounded-md border py-1.5 text-gray-900 shadow-sm  sm:text-sm/6 uppercase"
-                    value={selectedVillage?.subdistrict?.code.toString()}
+                    value={selectedSubdistrict?.code}
                     disabled={true}
                   >
-                    <option
-                      value={selectedVillage.subdistrict?.code.toString()}
-                    >
-                      {selectedVillage.subdistrict?.name}
+                    <option value={selectedSubdistrict?.code}>
+                      {selectedSubdistrict?.name}
                     </option>
                   </select>
                 </div>
               </div>
-            </div> */}
+            </div>
 
-            {/* <div className="sm:col-span-3 flex flex-col lg:flex-row gap-4">
+            <div className="sm:col-span-3 flex flex-col lg:flex-row gap-4">
               <div className="sm:w-fit">
                 <label
                   htmlFor="religion"
@@ -351,7 +438,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
                     onChange={handleReligion}
                   >
                     <option value="">Pilih Agama</option>
-                    {religion.map((data) => (
+                    {religion.map((data: any) => (
                       <option key={data.id} value={data.name}>
                         {data.name}
                       </option>
@@ -372,11 +459,11 @@ const ResidentUpdateForm = ({resident}:Props) => {
                     name="status"
                     autoComplete="status"
                     className="block w-full rounded-md border py-1.5 text-gray-900 shadow-sm sm:max-w-xs sm:text-sm/6"
-                    value={selectedmaritalStatus}
+                    value={selectedMaritalStatus}
                     onChange={handleMaritalStatus}
                   >
                     <option value="">Pilih Status Perkawinan</option>
-                    {maritalStatus.map((data) => (
+                    {maritalStatus.map((data: any) => (
                       <option key={data.id} value={data.id}>
                         {data.name}
                       </option>
@@ -401,7 +488,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
                     onChange={handleProfession}
                   >
                     <option value="">Pilih Pekerjaan</option>
-                    {profession.map((data) => (
+                    {profession.map((data: any) => (
                       <option key={data.id} value={data.id}>
                         {data.name}
                       </option>
@@ -409,9 +496,9 @@ const ResidentUpdateForm = ({resident}:Props) => {
                   </select>
                 </div>
               </div>
-            </div> */}
+            </div>
           </div>
-          {/* <div className="sm:col-span-3 mt-6 flex flex-col lg:flex-row gap-4">
+          <div className="sm:col-span-3 mt-6 flex flex-col lg:flex-row gap-4">
             <div className="sm:w-fit">
               <label
                 htmlFor="status"
@@ -428,7 +515,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
                   onChange={handleCitizen}
                 >
                   <option value="">Pilih Kewarganegaraan</option>
-                  {citizen.map((data) => (
+                  {citizen.map((data: any) => (
                     <option key={data.id} value={data.name}>
                       {data.name}
                     </option>
@@ -455,7 +542,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
                 />
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
 
@@ -464,7 +551,7 @@ const ResidentUpdateForm = ({resident}:Props) => {
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 w-full lg:w-fit text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          {loading ? "Menyimpan..." : "Perbarui"}
+          {loading ? "Memperbarui..." : "Perbarui"}
         </button>
       </div>
     </form>

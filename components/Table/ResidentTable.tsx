@@ -18,7 +18,7 @@ const ResidentTable = ({
 }: Props) => {
   const [loading, setLoading] = useState(false);
   return (
-    <div className="overflow-scroll lg:overflow-hidden pb-14">
+    <div className="overflow-x-scroll lg:overflow-hidden pb-14">
       <table className="min-w-full divide-y divide-gray-200">
         <thead>
           <tr>

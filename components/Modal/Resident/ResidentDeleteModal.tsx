@@ -1,10 +1,12 @@
 "use client";
+import { Resident } from "@/lib/types/residentType";
+import { deleteResident } from "@/redux/features/resident/residentSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import React, { SyntheticEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
-  resident?: any;
+  resident?: Resident;
   onClose: () => void;
 }
 
@@ -18,7 +20,7 @@ const ResidentDeleteModal = ({ resident, onClose }: Props) => {
     e.preventDefault();
     try {
       if (resident) {
-        // dispatch(updateCategory({ id: resident.id, formData: formData }));
+        dispatch(deleteResident({ id: resident.id }));
         onClose();
       }
     } catch (error) {
@@ -31,7 +33,7 @@ const ResidentDeleteModal = ({ resident, onClose }: Props) => {
       <div className="bg-white rounded-lg shadow-lg w-full sm:max-w-md">
         <form onSubmit={handleDelete}>
           <div className="p-3">
-            <h1 className="font-semibold text-xl">Hapus data pemilih ?</h1>
+            <h1 className="font-semibold text-xl">Hapus data pemilih?</h1>
             <p className=" text-base">Anda akan menghapus secara permanen</p>
           </div>
           <div className="flex justify-end items-center gap-3 py-3 px-4 ">
